@@ -31,7 +31,9 @@ int read_interactive(input_args *args)
 input_args parse_input(int argc, char *argv[])
 {
     input_args args = get_default_input_args();
-    char opt = 0;
+    char opt = 0,
+         p_flag = 0,
+         w_flag = 0;
     if (argc == 1)
     {
         read_interactive(&args);
@@ -41,6 +43,7 @@ input_args parse_input(int argc, char *argv[])
         switch (opt)
         {
         case 'p':
+            p_flag = 1;
             if (optarg == NULL)
                 close_this(1, "'p' option requires number of processes.");
             args.processes = atoi(optarg);
@@ -48,6 +51,7 @@ input_args parse_input(int argc, char *argv[])
                 close_this(1, "Invalid processes number.");
             break;
         case 'w':
+            w_flag = 1;
             if (optarg == NULL)
                 close_this(1, "'w' option requires word to benchmark.");
             sprintf(args.word, "%s", optarg);

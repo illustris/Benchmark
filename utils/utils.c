@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "utils.h"
 
 int s_len(char *input)
@@ -48,4 +49,11 @@ void print_hash(uint8_t *hash)
     printf("%2.2x%2.2x%2.2x%2.2x", hash[4], hash[5], hash[6], hash[7]);
     printf("%2.2x%2.2x%2.2x%2.2x", hash[8], hash[9], hash[10], hash[11]);
     printf("%2.2x%2.2x%2.2x%2.2x\n", hash[12], hash[13], hash[14], hash[15]);
+}
+
+unsigned long get_time_miliseconds()
+{
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (unsigned long)tv.tv_sec * 1000 + (unsigned long)tv.tv_usec / 1000;
 }

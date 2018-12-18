@@ -5,5 +5,5 @@
 #define MAX_LETTERS 64
 
 char *benchmark_word(char *);
-void get_candidate(char *, unsigned long long, int);
+void get_candidate(char *, int);
 void init_letters(char *, int);

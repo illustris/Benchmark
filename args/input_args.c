@@ -3,7 +3,7 @@
 #include <unistd.h>
 
 #include "input_args.h"
-#include "utils.h"
+#include "../utils/utils.h"
 
 input_args get_default_input_args()
 {
@@ -31,9 +31,7 @@ int read_interactive(input_args *args)
 input_args parse_input(int argc, char *argv[])
 {
     input_args args = get_default_input_args();
-    char opt = 0,
-         p_flag = 0,
-         w_flag = 0;
+    char opt = 0;
     if (argc == 1)
     {
         read_interactive(&args);
@@ -52,7 +50,7 @@ input_args parse_input(int argc, char *argv[])
         case 'w':
             if (optarg == NULL)
                 close_this(1, "'w' option requires word to benchmark.");
-            args.word = optarg;
+            sprintf(args.word, "%s", optarg);
             if (s_len(args.word) < 1 || !is_breakable(args.word))
                 close_this(1, "Invalid word.");
             break;

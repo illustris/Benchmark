@@ -17,7 +17,7 @@ int do_process_work(int id, char *word)
 #endif
     unsigned long start_time = get_time_miliseconds();
     benchmark_word(word);
-    printf("| %7d | %5s  | %8lu |\n", id, word, get_time_miliseconds() - start_time);
+    printf("| %7d | %5s  | %5s  | %8lu |\n", id, "OK", word, get_time_miliseconds() - start_time);
 
     exit(0);
 }
@@ -39,13 +39,15 @@ int main(int argc, char *argv[])
     input_args args = parse_input(argc, argv);
 
     validate_args(args);
-    printf("| Process |  Word  |   Time   |\n");
+    printf("| Process | Status |  Word  |   Time   |\n");
 
     start_time = get_time_miliseconds();
 
     for (int i = 0; i < args.processes; ++i)
         if (!(pid[i] = fork()))
             do_process_work(i + 1, args.word);
+        else if (pid[i] < 0)
+            printf("| %7d | %6s | %5s  | %8d |\n", i + 1, "FAILED", args.word, 0);
 
     for (int i = 0; i < args.processes; ++i)
         waitpid(pid[i], NULL, 0);

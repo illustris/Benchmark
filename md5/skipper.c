@@ -30,11 +30,20 @@ char *benchmark_word(char *word)
     char letters[MAX_LETTERS] = {0};
     uint8_t word_hash[16] = {0},
             candidate_hash[16] = {0};
+
     md5((uint8_t *)word, len, (uint8_t *)word_hash);
     init_letters(letters, len);
+
     while (!compare(word_hash, md5((uint8_t *)letters, len, (uint8_t *)candidate_hash)))
     {
         get_candidate(letters, len);
     }
+#ifdef DEBUG
+    printf("Candidate hash: ");
+    print_hash(candidate_hash);
+    printf("Word hash     : ");
+    print_hash(word_hash);
+#endif
+
     return word;
 }

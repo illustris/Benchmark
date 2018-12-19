@@ -9,7 +9,9 @@ input_args get_default_input_args()
 {
     input_args args;
     args.processes = 4;
+    args.default_flag = 0;
     sprintf(args.word, "%s", "koko");
+
     return args;
 }
 
@@ -17,14 +19,23 @@ int read_interactive(input_args *args)
 {
     int p = 0;
     char w[64];
+
     printf("Number of processes: ");
+
     if (scanf("%d", &p) != 1 || p < 1)
         close_this(1, "Invalid number.");
+
     printf("Word: ");
+
     if (scanf("%s", w) != 1 || !is_breakable(w))
         close_this(1, "Invalid word.");
+
     args->processes = p;
+    if (s_len(w) > MAX_WORD_LEN)
+        close_this(1, "Maximum word length is 5");
+
     sprintf(args->word, "%s", w);
+
     return 1;
 }
 
@@ -34,11 +45,13 @@ input_args parse_input(int argc, char *argv[])
     char opt = 0,
          p_flag = 0,
          w_flag = 0;
+
     if (argc == 1)
     {
         read_interactive(&args);
     }
-    while ((opt = getopt(argc, argv, "p:w:")) != -1)
+
+    while ((opt = getopt(argc, argv, "dp:w:")) != -1)
     {
         switch (opt)
         {
@@ -50,18 +63,36 @@ input_args parse_input(int argc, char *argv[])
             if (args.processes < 1)
                 close_this(1, "Invalid processes number.");
             break;
+
         case 'w':
             w_flag = 1;
             if (optarg == NULL)
                 close_this(1, "'w' option requires word to benchmark.");
+            if (s_len(optarg) > MAX_WORD_LEN)
+                close_this(1, "Maximum word length is 5");
+
             sprintf(args.word, "%s", optarg);
             if (s_len(args.word) < 1 || !is_breakable(args.word))
                 close_this(1, "Invalid word.");
             break;
+
+        case 'd':
+            args.default_flag = 1;
+            break;
+
         default:
             close_this(1, get_help_text());
             break;
         }
     }
+
+    if (argc > 1 && !p_flag && !w_flag && !args.default_flag)
+        close_this(1, "Invalid args.");
+
+    if (args.default_flag)
+        args = get_default_input_args();
+
+    args.default_flag = 1;
+
     return args;
 }

@@ -22,6 +22,7 @@ short is_breakable(char *input)
     for (int i = 0; *(input + i) != 0; ++i)
         if (*(input + i) < 33 || *(input + i) > 126)
             return 0;
+
     return 1;
 }
 
@@ -40,6 +41,7 @@ short compare(uint8_t *a, uint8_t *b)
     for (int i = 0; i < 16; ++i)
         if (*(a + i) != *(b + i))
             return 0;
+
     return 1;
 }
 
@@ -55,5 +57,28 @@ unsigned long get_time_miliseconds()
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);
+
     return (unsigned long)tv.tv_sec * 1000 + (unsigned long)tv.tv_usec / 1000;
+}
+
+unsigned long long long_pow(unsigned long long a, int b)
+{
+    if (b == 0)
+        return 1;
+    if (b == 1)
+        return a;
+    unsigned long long result = 1;
+    for (int i = 0; i < b; ++i)
+        result *= a;
+
+    return result;
+}
+
+unsigned long long get_hashes_number(char *word)
+{
+    int len = s_len(word);
+    unsigned long long factor = *word - 32,
+                       result = factor * long_pow(93, len - 1);
+
+    return result;
 }

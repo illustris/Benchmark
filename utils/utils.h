@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include <sys/time.h>
 
+#define MAX_PROCESSES 64
+
 void show_help();
 void close_this(int, char *);
 void print_hash(uint8_t *);

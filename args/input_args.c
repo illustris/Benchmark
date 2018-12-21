@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
 #include "input_args.h"
 #include "../utils/utils.h"
 
@@ -44,14 +40,17 @@ input_args parse_input(int argc, char *argv[])
     input_args args = get_default_input_args();
     char opt = 0,
          p_flag = 0,
-         w_flag = 0;
+         w_flag = 0,
+         h_flag = 0,
+         passed_hash[33] = {0};
 
     if (argc == 1)
     {
         read_interactive(&args);
+        return args;
     }
 
-    while ((opt = getopt(argc, argv, "dp:w:")) != -1)
+    while ((opt = getopt(argc, argv, "dp:w:h:")) != -1)
     {
         switch (opt)
         {
@@ -68,16 +67,32 @@ input_args parse_input(int argc, char *argv[])
             w_flag = 1;
             if (optarg == NULL)
                 close_this(1, "'w' option requires word to benchmark.");
+
             if (s_len(optarg) > MAX_WORD_LEN)
                 close_this(1, "Maximum word length is 5");
 
             sprintf(args.word, "%s", optarg);
             if (s_len(args.word) < 1 || !is_breakable(args.word))
                 close_this(1, "Invalid word.");
+            if (args.hash_flag)
+                close_this(1, "Concurent options.");
+            args.benchmark_flag = 1;
             break;
 
         case 'd':
             args.default_flag = 1;
+            break;
+
+        case 'h':
+            if (optarg == NULL)
+                close_this(1, "'h' option requires hash to break.");
+            if (s_len(optarg) != 32)
+                close_this(1, "Invalid hash.");
+            sprintf(passed_hash, "%s", optarg);
+            if (args.benchmark_flag)
+                close_this(1, "Concurent options.");
+            args.hash_flag = 1;
+            h_flag = 1;
             break;
 
         default:
@@ -86,13 +101,14 @@ input_args parse_input(int argc, char *argv[])
         }
     }
 
-    if (argc > 1 && !p_flag && !w_flag && !args.default_flag)
+    if (argc > 1 && !p_flag && !h_flag && !w_flag && !args.default_flag)
         close_this(1, "Invalid args.");
 
     if (args.default_flag)
+    {
         args = get_default_input_args();
-
-    args.default_flag = 1;
-
+        args.default_flag = 1;
+        return args;
+    }
     return args;
 }

@@ -8,9 +8,10 @@ int pipe_fd[MAX_PROCESSES][2];
 int do_process_work_break(int id, int len, int fd_id, char start_letter, char stop_letter, uint8_t hash[16])
 {
     unsigned long start_time = get_time_miliseconds();
-    char word[len + 1];
+    char word[MAX_LETTERS + 1];
     short result = brute_force_hash(len, start_letter, stop_letter, hash, word);
-    printf("| %7d | %5s  | %5s  | %8lu |\n", id, result ? "OK" : "Failed", result ? word : "", get_time_miliseconds() - start_time);
+
+    printf("| %7d | %5s  | %5s  | %8lu |\n", id, result ? "OK" : "Fail", result ? word : "", get_time_miliseconds() - start_time);
     if (!result)
     {
         close(pipe_fd[fd_id][0]);
@@ -18,7 +19,9 @@ int do_process_work_break(int id, int len, int fd_id, char start_letter, char st
         exit(0);
     }
     close(pipe_fd[fd_id][0]);
-    write(pipe_fd[fd_id][1], &word, len);
+    short tmp = write(pipe_fd[fd_id][1], &word, len);
+    if (tmp < 0)
+        tmp = -1;
     close(pipe_fd[fd_id][1]);
     exit(0);
 }
@@ -29,10 +32,10 @@ unsigned long make_breaker(uint8_t hash[16], int processes, int len, char *word)
         return 0;
     unsigned long start_time = 0,
                   total_time = 0;
-    unsigned long long total_hashes = 0;
     char start_letters[MAX_PROCESSES];
+
     for (int i = 0; i < processes; ++i)
-        start_letters[i] = (STOP_LETTER - START_LETTER) / processes + START_LETTER;
+        start_letters[i] = START_LETTER + i * ((STOP_LETTER - START_LETTER) / processes);
 
 #ifdef DEBUG
     for (int i = 0; i < processes; ++i)
@@ -41,8 +44,8 @@ unsigned long make_breaker(uint8_t hash[16], int processes, int len, char *word)
 
     printf("| Process | Status |  Word  |   Time   |\n");
 
-    for (int i = 0; i < processes; ++i)
-        pipe(pipe_fd[i]);
+    for (int i = 0, k = 0; i < processes; ++i, ++k)
+        k = pipe(pipe_fd[i]);
 
     start_time = get_time_miliseconds();
 
@@ -65,10 +68,22 @@ unsigned long make_breaker(uint8_t hash[16], int processes, int len, char *word)
         while (read(pipe_fd[i][0], &(buff[i]), len) > 0)
         {
 #ifdef DEBUG
-            printf("%s\n", &(buff[i]));
+            printf("readed %s\n", (buff[i]));
 #endif
-            if (s_len(&(buff[i])))
+            if (s_len((buff[i])))
                 solved_word_buff_id = i;
         }
     }
+
+    for (int i = 0; i < processes; ++i)
+        waitpid(pid[i], NULL, 0);
+
+    total_time = get_time_miliseconds() - start_time;
+
+    for (int i = 0; i < s_len(buff[solved_word_buff_id]); ++i)
+        word[i] = buff[solved_word_buff_id][i];
+    printf("Word       : %s\n", buff[solved_word_buff_id]);
+    printf("Total time : %lu\n", total_time);
+
+    return total_time;
 }

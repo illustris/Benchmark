@@ -7,7 +7,8 @@
 
 typedef struct
 {
-    int processes;
+    int processes,
+        len;
     char word[64],
         default_flag,
         hash_flag,

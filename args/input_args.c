@@ -6,6 +6,8 @@ input_args get_default_input_args()
     input_args args;
     args.processes = 4;
     args.default_flag = 0;
+    args.benchmark_flag = 0;
+    args.hash_flag = 0;
     sprintf(args.word, "%s", "koko");
 
     return args;
@@ -51,7 +53,7 @@ input_args parse_input(int argc, char *argv[])
         return args;
     }
 
-    while ((opt = getopt(argc, argv, "dp:w:h:")) != -1)
+    while ((opt = getopt(argc, argv, "dp:w:h:l:")) != -1)
     {
         switch (opt)
         {
@@ -76,7 +78,7 @@ input_args parse_input(int argc, char *argv[])
             if (s_len(args.word) < 1 || !is_breakable(args.word))
                 close_this(1, "Invalid word.");
             if (args.hash_flag)
-                close_this(1, "Concurent options.");
+                close_this(1, "Concurent options1.");
             args.benchmark_flag = 1;
             break;
 
@@ -91,9 +93,46 @@ input_args parse_input(int argc, char *argv[])
                 close_this(1, "Invalid hash.");
             sprintf(passed_hash, "%s", optarg);
             if (args.benchmark_flag)
-                close_this(1, "Concurent options.");
+                close_this(1, "Concurent options2.");
             args.hash_flag = 1;
             h_flag = 1;
+#ifdef DEBUG
+            printf("Try to scanf\n");
+#endif
+            sscanf(optarg, "%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x%2x",
+                   (unsigned int *)&args.input_hash[0],
+                   (unsigned int *)&args.input_hash[1],
+                   (unsigned int *)&args.input_hash[2],
+                   (unsigned int *)&args.input_hash[3],
+                   (unsigned int *)&args.input_hash[4],
+                   (unsigned int *)&args.input_hash[5],
+                   (unsigned int *)&args.input_hash[6],
+                   (unsigned int *)&args.input_hash[7],
+                   (unsigned int *)&args.input_hash[8],
+                   (unsigned int *)&args.input_hash[9],
+                   (unsigned int *)&args.input_hash[10],
+                   (unsigned int *)&args.input_hash[11],
+                   (unsigned int *)&args.input_hash[12],
+                   (unsigned int *)&args.input_hash[13],
+                   (unsigned int *)&args.input_hash[14],
+                   (unsigned int *)&args.input_hash[15]);
+#ifdef DEBUG
+            print_hash(args.input_hash);
+#endif
+            break;
+
+        case 'l':
+            if (args.benchmark_flag)
+                close_this(1, "Concurent options3.");
+            if (optarg == NULL)
+                close_this(1, "'l' option requires number of letters.");
+            args.len = atoi(optarg);
+            if (args.len == 0)
+                close_this(1, "Invalid value.");
+            args.hash_flag = 1;
+            h_flag = 1;
+            if (args.len > MAX_WORD_LEN)
+                close_this(1, "Invalid value.");
             break;
 
         default:

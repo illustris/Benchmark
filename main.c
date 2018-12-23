@@ -7,6 +7,7 @@
 #include "utils/utils.h"
 #include "md5/skipper.h"
 #include "benchmark.h"
+#include "breaker.h"
 
 void validate_args(input_args args)
 {
@@ -29,6 +30,9 @@ int main(int argc, char *argv[])
     }
     else if (args.hash_flag)
     {
+        char word[MAX_WORD_LEN + 1];
+        make_breaker(args.input_hash, args.processes, args.len, word);
+        close_this(0, "Bye! ;)");
     }
     return 0;
 }

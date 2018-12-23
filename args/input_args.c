@@ -31,6 +31,7 @@ int read_interactive(input_args *args)
         close_this(1, "Maximum word length is 5");
 
     sprintf(args->word, "%s", w);
+    args->benchmark_flag = 1;
 
     return 1;
 }

@@ -47,3 +47,30 @@ char *benchmark_word(char *word)
 
     return word;
 }
+
+short brute_force_hash(int len, char start_letter, char stop_letter, uint8_t to_break_hash[16], char *broken_word)
+{
+    if (s_len(broken_word) < len)
+        return 0;
+    uint8_t candidate_hash[16] = {0};
+    char letters[MAX_LETTERS] = {0};
+    init_letters(letters, len);
+    letters[0] = start_letter;
+    while (!compare(to_break_hash, md5((uint8_t *)letters, len, candidate_hash)))
+    {
+        get_candidate(letters, len);
+        if (letters[0] > stop_letter)
+#ifdef DEBUG
+            printf("%d\n", letters[0]);
+#endif
+        return 0;
+        break;
+    }
+#ifdef DEBUG
+    printf("Broken: %s\n", letters);
+#endif
+    for (int i = 0; i < len; ++i)
+        broken_word[i] = letters[i];
+
+    return 1;
+}

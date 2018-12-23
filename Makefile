@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -O3
 
-all: main
+all: main clean
 
 debug: CFLAGS += -DDEBUG
 debug: all
@@ -22,4 +22,4 @@ args.o: args/input_args.h args/input_args.c utils.o
 	$(CC) $(CFLAGS) -l utils.o -c args/input_args.h args/input_args.c
 
 clean:
-	rm *.o; cd md5; rm *.gch; cd ../utils; rm *.gch; cd ../args; rm *.gch; cd ../;
+	rm *.o; rm *.gch; rm ./*/*.gch;

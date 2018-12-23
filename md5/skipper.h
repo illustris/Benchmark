@@ -6,6 +6,7 @@
 #define MAX_LETTERS 64
 
 char *benchmark_word(char *);
+short brute_force_hash(int , char , char , uint8_t [16], char *);
 
 void get_candidate(char *, int);
 void init_letters(char *, int);

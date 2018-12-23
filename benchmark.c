@@ -4,7 +4,7 @@
 
 pid_t pid[MAX_PROCESSES];
 
-int do_process_work(int id, char *word)
+int do_process_work_benchmark(int id, char *word)
 {
 #ifdef DEBUG
     printf("Proc %d started\n", id);
@@ -27,7 +27,7 @@ unsigned long make_benchmark(char *word, int processes)
 
     for (int i = 0; i < processes; ++i)
         if (!(pid[i] = fork()))
-            do_process_work(i + 1, word);
+            do_process_work_benchmark(i + 1, word);
         else if (pid[i] < 0)
             printf("| %7d | %6s | %5s  | %8d |\n", i + 1, "FAILED", word, 0);
 

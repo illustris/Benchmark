@@ -5,4 +5,4 @@
 
 unsigned long make_benchmark(char *, int);
 
-int do_process_work(int, char *);
+int do_process_work_benchmark(int, char *);

@@ -82,6 +82,7 @@ unsigned long make_breaker(uint8_t hash[16], int processes, int len, char *word)
 
     for (int i = 0; i < s_len(buff[solved_word_buff_id]); ++i)
         word[i] = buff[solved_word_buff_id][i];
+    buff[solved_word_buff_id][len] = 0;
     printf("Word       : %s\n", buff[solved_word_buff_id]);
     printf("Total time : %lu\n", total_time);
 

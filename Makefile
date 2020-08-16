@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -O3
 
 all: main clean
 
-debug: CFLAGS += -DDEBUG
+debug: CFLAGS += -DDEBUG -g
 debug: all
 
 main: utils.o md5.o breaker.o benchmark.o args.o main.c

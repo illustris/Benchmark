@@ -53,7 +53,7 @@ input_args parse_input(int argc, char *argv[])
         return args;
     }
 
-    while ((opt = getopt(argc, argv, "dp:w:h:l:")) != -1)
+    while ((opt = getopt(argc, argv, "dp:w:h:l:")) != (char)-1)
     {
         switch (opt)
         {
